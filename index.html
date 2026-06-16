@@ -1,0 +1,1499 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Keepiluv-Agent - AI와 함께 만드는 더 나은 개발 경험. 12개의 전문 AI Agent가 협업하는 지식 베이스 시스템.">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Keepiluv-Agent | AI-Powered Knowledge Base & Agent Orchestration">
+    <meta property="og:description" content="12개의 전문 AI Agent가 협업하는 지식 베이스 시스템. 지식 관리부터 코드 작성까지 자동화된 개발 환경.">
+    <meta property="og:url" content="https://github.com/chanho0908/Keepiluv-Agent">
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Keepiluv-Agent | AI-Powered Knowledge Base">
+    <meta name="twitter:description" content="12개의 전문 AI Agent가 협업하는 지식 베이스 시스템">
+
+    <title>Keepiluv-Agent | AI-Powered Knowledge Base & Agent Orchestration</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        /* ===== Reset & Base ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            /* Spotify Colors - WCAG AA/AAA Compliant */
+            --spotify-green: #1ed760;
+            --spotify-green-dark: #1db954;
+            --near-black: #121212;
+            --dark-surface: #181818;
+            --mid-dark: #1f1f1f;
+            --dark-card: #252525;
+            --canvas: #ffffff;           /* 15.8:1 on near-black (AAA) */
+            --canvas-soft: #c5c5c5;      /* 11.0:1 on near-black (AAA) */
+            --body-text: #c5c5c5;        /* 11.0:1 on near-black (AAA) */
+            --mute-text: #a0a0a0;        /* 7.9:1 on near-black (AAA) */
+            --border-gray: #535353;      /* Improved visibility */
+
+            /* Spacing */
+            --spacing-xs: 8px;
+            --spacing-sm: 16px;
+            --spacing-md: 24px;
+            --spacing-lg: 48px;
+            --spacing-xl: 64px;
+            --spacing-2xl: 96px;
+
+            /* Border Radius */
+            --radius-pill: 500px;
+            --radius-card: 8px;
+            --radius-badge: 500px;
+
+            /* Transitions */
+            --transition-fast: 0.15s ease;
+            --transition-normal: 0.25s ease;
+            --transition-slow: 0.4s ease;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+
+        html {
+            scroll-behavior: smooth;
+            font-size: 16px;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            line-height: 1.6;
+            color: var(--canvas);
+            background: var(--near-black);
+            overflow-x: hidden;
+        }
+
+        /* ===== Typography ===== */
+        h1, h2, h3, h4, h5, h6 {
+            line-height: 1.2;
+            font-weight: 700;
+        }
+
+        h1 {
+            font-size: clamp(48px, 8vw, 72px);
+            font-weight: 800;
+        }
+
+        h2 {
+            font-size: clamp(32px, 5vw, 42px);
+            font-weight: 700;
+            margin-bottom: var(--spacing-md);
+        }
+
+        h3 {
+            font-size: clamp(20px, 3vw, 24px);
+            font-weight: 600;
+            margin-bottom: var(--spacing-sm);
+        }
+
+        p {
+            font-size: 16px;
+            line-height: 1.8;
+            color: var(--body-text);
+        }
+
+        .subtitle {
+            font-size: clamp(18px, 2.5vw, 24px);
+            font-weight: 300;
+            color: var(--mute-text);
+            margin-top: var(--spacing-sm);
+        }
+
+        .caption {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--body-text);
+        }
+
+        code {
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            background: var(--mid-dark);
+            color: #2eea70; /* Brighter green for better contrast (6.7:1 on mid-dark) */
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.9em;
+        }
+
+        /* ===== Layout ===== */
+        .container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 var(--spacing-md);
+        }
+
+        .section {
+            padding: var(--spacing-xl) 0;
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.8s var(--transition-slow), transform 0.8s var(--transition-slow);
+        }
+
+        .section.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        main .section:nth-child(even) {
+            background: var(--dark-surface);
+        }
+
+        main .section:nth-child(odd) {
+            background: var(--near-black);
+        }
+
+        /* ===== Progress Bar ===== */
+        .progress-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 0%;
+            height: 3px;
+            background: var(--spotify-green);
+            z-index: 9999;
+            transition: width 0.1s ease;
+        }
+
+        /* ===== Skip Link ===== */
+        .skip-link {
+            position: absolute;
+            top: -40px;
+            left: 0;
+            background: var(--spotify-green);
+            color: var(--near-black);
+            padding: 8px 16px;
+            text-decoration: none;
+            font-weight: 600;
+            z-index: 100;
+        }
+
+        .skip-link:focus {
+            top: 0;
+        }
+
+        /* ===== Hero Section ===== */
+        .hero {
+            background: linear-gradient(135deg, var(--near-black) 0%, var(--mid-dark) 100%);
+            color: var(--canvas);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+            padding: var(--spacing-xl) 0;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background:
+                radial-gradient(circle at 20% 50%, rgba(30, 215, 96, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(30, 215, 96, 0.05) 0%, transparent 50%);
+            pointer-events: none;
+        }
+
+        .hero-container {
+            position: relative;
+            z-index: 1;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--spacing-xl);
+            align-items: center;
+            width: 100%;
+            max-width: 1280px;
+            padding: 0 var(--spacing-md);
+        }
+
+        .hero-content {
+            text-align: left;
+            animation: heroFadeIn 1.2s var(--transition-slow) forwards;
+        }
+
+        @keyframes heroFadeIn {
+            from {
+                opacity: 0;
+                transform: translateX(-40px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .hero h1 {
+            color: var(--canvas);
+            margin-bottom: var(--spacing-md);
+        }
+
+        .hero .tagline {
+            font-size: clamp(16px, 2vw, 20px);
+            font-weight: 400;
+            color: var(--canvas-soft);
+            margin: var(--spacing-md) 0 var(--spacing-lg);
+            max-width: 600px;
+        }
+
+        .hero-actions {
+            display: flex;
+            gap: var(--spacing-md);
+            align-items: center;
+            justify-content: flex-start;
+            flex-wrap: wrap;
+        }
+
+        .hero-character-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: heroCharacterFadeIn 1.4s var(--transition-slow) forwards;
+        }
+
+        @keyframes heroCharacterFadeIn {
+            from {
+                opacity: 0;
+                transform: translateX(40px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .hero-character {
+            opacity: 1;
+            filter: drop-shadow(0 20px 40px rgba(30, 215, 96, 0.3));
+            animation: floatBounce 4s ease-in-out infinite;
+            width: 100%;
+            max-width: 450px;
+            height: auto;
+        }
+
+        @keyframes floatBounce {
+            0%, 100% {
+                transform: translateY(0) rotate(0deg);
+            }
+            25% {
+                transform: translateY(-15px) rotate(-3deg);
+            }
+            75% {
+                transform: translateY(-10px) rotate(3deg);
+            }
+        }
+
+        @media (max-width: 1024px) {
+            .hero-container {
+                grid-template-columns: 1fr;
+                gap: var(--spacing-lg);
+                text-align: center;
+            }
+
+            .hero-content {
+                text-align: center;
+            }
+
+            .hero .tagline {
+                margin-left: auto;
+                margin-right: auto;
+            }
+
+            .hero-actions {
+                justify-content: center;
+            }
+
+            .hero-character {
+                max-width: 350px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .hero-character {
+                max-width: 250px;
+            }
+        }
+
+        .github-link {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--spacing-xs);
+            color: var(--canvas);
+            text-decoration: none;
+            padding: 12px 24px;
+            border: 2px solid var(--canvas);
+            border-radius: var(--radius-pill);
+            font-weight: 600;
+            transition: all var(--transition-normal);
+        }
+
+        .github-link:hover {
+            background: var(--spotify-green);
+            color: var(--near-black);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(30, 215, 96, 0.4);
+        }
+
+        .github-icon {
+            width: 24px;
+            height: 24px;
+            fill: currentColor;
+        }
+
+        /* ===== Buttons ===== */
+        .btn {
+            display: inline-block;
+            padding: 14px 36px;
+            border-radius: var(--radius-pill);
+            font-weight: 600;
+            text-decoration: none;
+            transition: all var(--transition-normal);
+            cursor: pointer;
+            border: none;
+            font-size: 16px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-primary {
+            background: var(--spotify-green);
+            color: var(--near-black);
+        }
+
+        .btn-primary:hover {
+            background: var(--spotify-green-dark);
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 8px 24px rgba(30, 215, 96, 0.5);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0) scale(0.98);
+        }
+
+        .btn::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .btn:active::after {
+            width: 300px;
+            height: 300px;
+        }
+
+        /* ===== Sticky Navigation ===== */
+        .nav-sticky {
+            position: sticky;
+            top: 0;
+            background: rgba(18, 18, 18, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border-gray);
+            z-index: 1000;
+            padding: var(--spacing-sm) 0;
+            transition: all var(--transition-normal);
+            transform: translateY(-100%);
+        }
+
+        .nav-sticky.visible {
+            transform: translateY(0);
+        }
+
+        .nav-sticky .container {
+            display: flex;
+            justify-content: center;
+            gap: var(--spacing-md);
+            flex-wrap: wrap;
+        }
+
+        .nav-sticky a {
+            color: var(--canvas-soft);
+            text-decoration: none;
+            font-weight: 500;
+            padding: 8px 16px;
+            border-radius: 20px;
+            transition: all var(--transition-fast);
+            position: relative;
+        }
+
+        .nav-sticky a::after {
+            content: '';
+            position: absolute;
+            bottom: 4px;
+            left: 16px;
+            right: 16px;
+            height: 2px;
+            background: var(--spotify-green);
+            transform: scaleX(0);
+            transition: transform var(--transition-normal);
+        }
+
+        .nav-sticky a:hover::after,
+        .nav-sticky a.active::after {
+            transform: scaleX(1);
+        }
+
+        .nav-sticky a.active {
+            color: var(--spotify-green);
+            font-weight: 600;
+        }
+
+        .nav-sticky a:hover {
+            color: var(--canvas);
+            background: rgba(30, 215, 96, 0.1);
+        }
+
+        /* ===== Grid System ===== */
+        .grid {
+            display: grid;
+            gap: var(--spacing-md);
+        }
+
+        .grid-2 {
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        }
+
+        .grid-3 {
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        }
+
+        /* ===== Cards ===== */
+        .card {
+            background: var(--dark-surface);
+            border-radius: var(--radius-card);
+            padding: var(--spacing-md);
+            box-shadow: 0 8px 8px rgba(0, 0, 0, 0.3);
+            transition: all var(--transition-normal);
+            position: relative;
+        }
+
+        .card:has(.card-details) {
+            cursor: pointer;
+        }
+
+        .card:has(.card-details):hover {
+            transform: translateY(-8px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+            background: var(--mid-dark);
+        }
+
+        .card h3 {
+            color: var(--canvas);
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-xs);
+        }
+
+        .card-icon {
+            font-size: 32px;
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .card p {
+            margin-top: var(--spacing-sm);
+        }
+
+        /* ===== Card Details Dialog ===== */
+        .card-details {
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%) translateY(-12px);
+            background: var(--dark-card);
+            border: 2px solid var(--spotify-green);
+            border-radius: var(--radius-card);
+            padding: var(--spacing-md);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity var(--transition-normal), visibility var(--transition-normal), transform var(--transition-normal);
+            z-index: 1000;
+            width: 320px;
+            max-width: 90vw;
+            pointer-events: none;
+        }
+
+        .card:hover .card-details {
+            opacity: 1;
+            visibility: visible;
+            transform: translateX(-50%) translateY(-16px);
+        }
+
+        .card-details h4 {
+            color: var(--spotify-green);
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: var(--spacing-sm);
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-xs);
+        }
+
+        .card-details p {
+            font-size: 14px;
+            line-height: 1.6;
+            color: var(--body-text);
+            margin-top: var(--spacing-xs);
+        }
+
+        .card-details ul {
+            font-size: 13px;
+            line-height: 1.6;
+            color: var(--body-text);
+            margin: var(--spacing-xs) 0;
+            padding-left: 20px;
+        }
+
+        .card-details ul li {
+            margin-bottom: 4px;
+        }
+
+        .card-details::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 8px solid transparent;
+            border-top-color: var(--spotify-green);
+        }
+
+        @media (max-width: 768px) {
+            .card-details {
+                width: 280px;
+                font-size: 13px;
+            }
+        }
+
+
+        /* ===== SVG Diagrams ===== */
+        .diagram-container {
+            margin: var(--spacing-lg) 0;
+            background: var(--dark-surface);
+            padding: var(--spacing-lg);
+            border-radius: var(--radius-card);
+            box-shadow: 0 8px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        .diagram {
+            width: 100%;
+            height: auto;
+            max-width: 800px;
+            margin: 0 auto;
+            display: block;
+        }
+
+        /* ===== Stats Counter ===== */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: var(--spacing-md);
+            margin-top: var(--spacing-lg);
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: var(--spacing-md);
+            background: var(--dark-surface);
+            border-radius: var(--radius-card);
+            box-shadow: 0 8px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        .stat-number {
+            font-size: clamp(36px, 5vw, 48px);
+            font-weight: 800;
+            color: var(--spotify-green);
+            display: block;
+            margin-bottom: var(--spacing-xs);
+        }
+
+        .stat-label {
+            font-size: 14px;
+            color: var(--body-text);
+            font-weight: 500;
+        }
+
+        /* ===== Tech Stack ===== */
+        .tech-stack {
+            display: flex;
+            flex-wrap: wrap;
+            gap: var(--spacing-xs);
+            margin-top: var(--spacing-md);
+        }
+
+        .tech-badge {
+            background: var(--mid-dark);
+            color: var(--canvas-soft);
+            padding: 6px 16px;
+            border-radius: var(--radius-badge);
+            font-size: 14px;
+            font-weight: 500;
+            transition: all var(--transition-fast);
+        }
+
+        .tech-badge:hover {
+            background: var(--spotify-green);
+            color: var(--near-black);
+            transform: scale(1.05);
+        }
+
+        /* ===== Footer ===== */
+        .footer {
+            background: var(--near-black);
+            color: var(--canvas);
+            padding: var(--spacing-xl) 0;
+            text-align: center;
+            border-top: 1px solid var(--border-gray);
+        }
+
+        .footer p {
+            color: var(--body-text);
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .footer a {
+            color: var(--spotify-green);
+            text-decoration: none;
+            font-weight: 600;
+            transition: color var(--transition-fast);
+        }
+
+        .footer a:hover {
+            color: var(--canvas);
+        }
+
+        /* ===== Responsive ===== */
+        @media (max-width: 768px) {
+            :root {
+                --spacing-lg: 32px;
+                --spacing-xl: 48px;
+                --spacing-2xl: 64px;
+            }
+
+            .hero {
+                min-height: 80vh;
+            }
+
+            .nav-sticky .container {
+                gap: var(--spacing-xs);
+            }
+
+            .nav-sticky a {
+                font-size: 14px;
+                padding: 6px 12px;
+            }
+
+            #overview .container > div[style*="grid-template-columns"] {
+                grid-template-columns: 1fr !important;
+                gap: var(--spacing-md) !important;
+                text-align: center;
+            }
+
+            #overview .container img {
+                width: 140px !important;
+            }
+
+            #wiki .grid[style*="repeat(auto-fit"] {
+                grid-template-columns: repeat(2, 1fr) !important;
+            }
+
+            #wiki .container > div[style*="grid-template-columns"] {
+                grid-template-columns: 1fr !important;
+                gap: var(--spacing-md) !important;
+                text-align: center;
+            }
+
+            #wiki .container img {
+                width: 140px !important;
+            }
+        }
+
+        /* ===== Focus Styles (Accessibility) ===== */
+        *:focus {
+            outline: 2px solid var(--spotify-green);
+            outline-offset: 2px;
+        }
+
+        *:focus:not(:focus-visible) {
+            outline: none;
+        }
+
+        *:focus-visible {
+            outline: 2px solid var(--spotify-green);
+            outline-offset: 2px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Skip Link -->
+    <a href="#main-content" class="skip-link">메인 콘텐츠로 바로가기</a>
+
+    <!-- Progress Bar -->
+    <div class="progress-bar" id="progressBar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+
+    <!-- Hero Section -->
+    <section class="hero" aria-labelledby="hero-title">
+        <div class="hero-container">
+            <!-- Left: Text Content -->
+            <div class="hero-content">
+                <h1 id="hero-title">Keepiluv-Agent</h1>
+                <p class="subtitle">AI와 함께 만드는 더 나은 개발 경험</p>
+                <p class="tagline">지식 관리부터 코드 작성까지, 12개의 전문 AI Agent가 협업합니다</p>
+                <div class="hero-actions">
+                    <a href="https://github.com/chanho0908/Keepiluv-Agent" class="github-link" target="_blank" rel="noopener noreferrer" aria-label="GitHub 프로필 보기">
+                        <svg class="github-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                            <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
+                        </svg>
+                        GitHub
+                    </a>
+                </div>
+            </div>
+
+            <!-- Right: Character -->
+            <div class="hero-character-wrapper">
+                <img src="hero-character-main.png" alt="" class="hero-character" aria-hidden="true">
+            </div>
+        </div>
+    </section>
+
+    <!-- Sticky Navigation -->
+    <nav class="nav-sticky" id="stickyNav" aria-label="페이지 네비게이션">
+        <div class="container">
+            <a href="#overview" data-section="overview">개요</a>
+            <a href="#wiki" data-section="wiki">LLM Wiki</a>
+            <a href="#agents" data-section="agents">Agent</a>
+            <a href="#skills" data-section="skills">Skills</a>
+            <a href="#stats" data-section="stats">성과</a>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main id="main-content">
+        <!-- Overview Section -->
+        <section id="overview" class="section">
+            <div class="container">
+                <h2>개요</h2>
+                <div style="display: grid; grid-template-columns: 1fr auto; gap: var(--spacing-lg); align-items: center; margin-top: var(--spacing-lg);">
+                    <!-- Text content -->
+                    <div>
+                        <p style="font-size: 20px; line-height: 1.8; color: var(--canvas); margin-bottom: var(--spacing-md);">
+                            <strong>Keepiluv-Agent</strong>는 Android 앱 개발을 위한 <strong>AI Agent </strong>입니다.
+                        </p>
+                        <p style="font-size: 18px; line-height: 1.8; color: var(--body-text);">
+                            <strong>12개의 전문 Sub Agent</strong>가 자율적으로 협업하며 지식을 축적하는 <strong>살아있는 개발 환경</strong>입니다.<br>
+                            개발 과정에서 <strong>반복되는 지식을 Wiki에 축적</strong>하여 효율적으로 개발할 수 있습니다.
+                        </p>
+                    </div>
+
+                    <!-- Character pointing -->
+                    <div style="display: flex; align-items: center; justify-content: center;">
+                        <img src="overview-character.png" alt="" style="width: 200px; height: auto; filter: drop-shadow(0 10px 20px rgba(30, 215, 96, 0.2));" aria-hidden="true">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- LLM Wiki Section -->
+        <section id="wiki" class="section">
+            <div class="container">
+                <div style="display: grid; grid-template-columns: 1fr auto; gap: var(--spacing-lg); align-items: center; margin-bottom: var(--spacing-lg);">
+                    <div>
+                        <h2>LLM Wiki</h2>
+                        <p style="font-size: 18px; color: var(--body-text); max-width: 700px; margin-bottom: var(--spacing-md);">
+                            프로젝트의 <strong>공식 지식 베이스</strong>로, 모든 Agent가 참조하고 자동으로 업데이트하는 중앙 지식 저장소
+                        </p>
+                        <a href="https://github.com/chanho0908/Keepiluv-Agent/tree/main/wiki" class="github-link" target="_blank" rel="noopener noreferrer" style="display: inline-flex; padding: 10px 20px; font-size: 14px;">
+                            <svg class="github-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" style="width: 20px; height: 20px;">
+                                <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
+                            </svg>
+                            Wiki 저장소 보기
+                        </a>
+                    </div>
+                    <div style="display: flex; align-items: center; justify-content: center;">
+                        <img src="wiki-character.png" alt="" style="width: 180px; height: auto; filter: drop-shadow(0 10px 20px rgba(30, 215, 96, 0.2));" aria-hidden="true">
+                    </div>
+                </div>
+
+                <!-- Wiki Categories -->
+                <div class="grid grid-3" style="margin-bottom: var(--spacing-xl);">
+                    <div class="card">
+                        <h3>Reference</h3>
+                        <p style="margin-bottom: var(--spacing-sm);">프로젝트의 핵심 지식</p>
+                        <ul style="list-style-position: inside; color: var(--body-text); margin-top: var(--spacing-sm); font-size: 14px;">
+                            <li><strong>프로젝트 개요</strong></li>
+                            <li><strong>아키텍처 원칙</strong></li>
+                            <li><strong>도메인 용어집</strong></li>
+                            <li><strong>테스트 전략</strong></li>
+                        </ul>
+                    </div>
+
+                    <div class="card">
+                        <h3>Operations</h3>
+                        <p style="margin-bottom: var(--spacing-sm);">Agent 작업 운영 기준</p>
+                        <ul style="list-style-position: inside; color: var(--body-text); margin-top: var(--spacing-sm); font-size: 14px;">
+                            <li><strong>Agent 라우팅:</strong> 요청 의도별 Agent 선택</li>
+                            <li><strong>워크플로우:</strong> 에이전트간의 작업 순서</li>
+                            <li><strong>Agent 목록:</strong> 12개 Agent 역할 정의</li>
+                        </ul>
+                    </div>
+
+                    <div class="card">
+                        <h3>Schema</h3>
+                        <p style="margin-bottom: var(--spacing-sm);">Wiki 관리 체계</p>
+                        <ul style="list-style-position: inside; color: var(--body-text); margin-top: var(--spacing-sm); font-size: 14px;">
+                            <li><strong>운영 흐름:</strong> 등록, 검색, 검증 프로세스</li>
+                            <li><strong>자동 유지보수:</strong> 코드 변경 시 자동 업데이트</li>
+                            <li><strong>출처 정책:</strong> 정보 출처 명시 및 관리</li>
+                            <li><strong>검사 기준:</strong> 문서 품질 유지 기준</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Authority System -->
+                <div style="background: var(--dark-surface); padding: var(--spacing-lg); border-radius: var(--radius-card); border: 1px solid var(--border-gray); margin-bottom: var(--spacing-lg);">
+                    <h3 style="color: var(--spotify-green); margin-bottom: var(--spacing-md);">Authority 시스템</h3>
+                    <p style="color: var(--body-text); line-height: 1.8; margin-bottom: var(--spacing-sm);">
+                        Wiki 문서는 <strong>신뢰도 수준</strong>에 따라 3단계로 구분됩니다.
+                    </p>
+                    <div class="grid grid-3">
+                        <div style="background: var(--mid-dark); padding: var(--spacing-md); border-radius: var(--radius-card);">
+                            <h4 style="color: var(--spotify-green); font-size: 16px; margin-bottom: var(--spacing-xs);">canonical</h4>
+                            <p style="font-size: 14px; color: var(--body-text);">공식 사실과 정책. Agent가 따라야 할 최종 기준</p>
+                        </div>
+                        <div style="background: var(--mid-dark); padding: var(--spacing-md); border-radius: var(--radius-card);">
+                            <h4 style="color: var(--canvas-soft); font-size: 16px; margin-bottom: var(--spacing-xs);">synthesized</h4>
+                            <p style="font-size: 14px; color: var(--body-text);">canonical을 연결해 설명. 충돌 시 canonical 우선</p>
+                        </div>
+                        <div style="background: var(--mid-dark); padding: var(--spacing-md); border-radius: var(--radius-card);">
+                            <h4 style="color: var(--mute-text); font-size: 16px; margin-bottom: var(--spacing-xs);">none</h4>
+                            <p style="font-size: 14px; color: var(--body-text);">지식 후보. 2회 이상 사용 시 승격 검토</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Integration -->
+                <div style="margin-top: var(--spacing-lg); text-align: center;">
+                    <h3 style="margin-bottom: var(--spacing-md);">Obsidian 연동</h3>
+                    <p style="font-size: 16px; color: var(--body-text); max-width: 700px; margin: 0 auto; line-height: 1.8;">
+                        Obsidian을 사용해 <strong>Graph View, Backlinks, Properties</strong> 등의 강력한 지식 탐색 기능을 활용 가능
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Agents Section -->
+        <section id="agents" class="section">
+            <div class="container">
+                <h2>Agent Orchestration</h2>
+                <p style="font-size: 18px; color: var(--body-text); margin-bottom: var(--spacing-lg); max-width: 700px;">
+                    각 Agent는 <strong>명확한 역할</strong>을 가지고 사용자의 요청 의도를 분석해 적절한 Agent에게 자동으로 연결
+                </p>
+
+                <!-- Agent Flow Diagram -->
+                <div class="diagram-container">
+                    <svg class="diagram" viewBox="0 0 1000 550" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="diagram-title">
+                        <title id="diagram-title">Agent 오케스트레이션 흐름도</title>
+
+                        <!-- User Request -->
+                        <rect x="375" y="40" width="250" height="80" fill="#1ed760" rx="12"/>
+                        <text x="500" y="88" text-anchor="middle" fill="#000000" font-size="26" font-weight="700">사용자 요청</text>
+
+                        <!-- Arrow down -->
+                        <path d="M500 120 L500 170" stroke="#c5c5c5" stroke-width="4" fill="none" marker-end="url(#arrowhead)"/>
+
+                        <!-- Codex Analysis -->
+                        <rect x="350" y="170" width="300" height="80" fill="#181818" rx="12" stroke="#1ed760" stroke-width="2"/>
+                        <text x="500" y="218" text-anchor="middle" fill="#ffffff" font-size="22" font-weight="700">AGENTS.md 오케스트레이터</text>
+
+                        <!-- Arrows to three tiers -->
+                        <path d="M500 250 L200 310" stroke="#c5c5c5" stroke-width="4" fill="none" marker-end="url(#arrowhead)"/>
+                        <path d="M500 250 L500 310" stroke="#c5c5c5" stroke-width="4" fill="none" marker-end="url(#arrowhead)"/>
+                        <path d="M500 250 L935 310" stroke="#c5c5c5" stroke-width="4" fill="none" marker-end="url(#arrowhead)"/>
+
+                        <!-- Tier 1 -->
+                        <rect x="20" y="310" width="360" height="230" fill="#252525" rx="12" stroke="#1ed760" stroke-width="4"/>
+                        <text x="200" y="345" text-anchor="middle" font-size="20" font-weight="700" fill="#1ed760">Tier 1 (탐색/문서)</text>
+
+                        <rect x="45" y="370" width="140" height="60" fill="#181818" rx="10" class="agent-box"/>
+                        <text x="115" y="408" text-anchor="middle" font-size="18" font-weight="700" fill="#ffffff">explore</text>
+
+                        <rect x="205" y="370" width="140" height="60" fill="#181818" rx="10" class="agent-box"/>
+                        <text x="275" y="408" text-anchor="middle" font-size="18" font-weight="700" fill="#ffffff">writer</text>
+
+                        <!-- Tier 2 -->
+                        <rect x="400" y="310" width="460" height="230" fill="#252525" rx="12" stroke="#1ed760" stroke-width="4"/>
+                        <text x="630" y="345" text-anchor="middle" font-size="20" font-weight="700" fill="#1ed760">Tier 2 (실행)</text>
+
+                        <rect x="420" y="370" width="120" height="55" fill="#181818" rx="10" class="agent-box"/>
+                        <text x="480" y="404" text-anchor="middle" font-size="16" font-weight="700" fill="#ffffff">interviewer</text>
+
+                        <rect x="555" y="370" width="105" height="55" fill="#181818" rx="10" class="agent-box"/>
+                        <text x="607" y="404" text-anchor="middle" font-size="16" font-weight="700" fill="#ffffff">planner</text>
+
+                        <rect x="675" y="370" width="85" height="55" fill="#181818" rx="10" class="agent-box"/>
+                        <text x="717" y="404" text-anchor="middle" font-size="16" font-weight="700" fill="#ffffff">tester</text>
+
+                        <rect x="775" y="370" width="70" height="55" fill="#181818" rx="10" class="agent-box"/>
+                        <text x="810" y="404" text-anchor="middle" font-size="16" font-weight="700" fill="#ffffff">wiki</text>
+
+                        <rect x="420" y="440" width="125" height="55" fill="#181818" rx="10" class="agent-box"/>
+                        <text x="482" y="474" text-anchor="middle" font-size="16" font-weight="700" fill="#ffffff">implementer</text>
+
+                        <rect x="560" y="440" width="130" height="55" fill="#181818" rx="10" class="agent-box"/>
+                        <text x="625" y="474" text-anchor="middle" font-size="16" font-weight="700" fill="#ffffff">code-reviewer</text>
+
+                        <rect x="705" y="440" width="140" height="55" fill="#181818" rx="10" class="agent-box"/>
+                        <text x="775" y="474" text-anchor="middle" font-size="16" font-weight="700" fill="#ffffff">perf-optimizer</text>
+
+                        <!-- Git Tier -->
+                        <rect x="880" y="310" width="110" height="230" fill="#181818" rx="12" stroke="#1ed760" stroke-width="2"/>
+                        <text x="935" y="345" text-anchor="middle" font-size="20" font-weight="700" fill="#1ed760">Git</text>
+
+                        <rect x="895" y="385" width="80" height="55" fill="#252525" rx="10" class="agent-box"/>
+                        <text x="935" y="419" text-anchor="middle" font-size="15" font-weight="700" fill="#ffffff">committer</text>
+
+                        <rect x="895" y="455" width="80" height="55" fill="#252525" rx="10" class="agent-box"/>
+                        <text x="935" y="489" text-anchor="middle" font-size="15" font-weight="700" fill="#ffffff">pr-creator</text>
+
+                        <!-- Arrow marker definition -->
+                        <defs>
+                            <marker id="arrowhead" markerWidth="8" markerHeight="8" refX="7" refY="2.5" orient="auto">
+                                <polygon points="0 0, 8 2.5, 0 5" fill="#c5c5c5"/>
+                            </marker>
+                        </defs>
+                    </svg>
+                </div>
+
+                <!-- Agent Details -->
+                <div class="grid grid-3" style="margin-top: var(--spacing-lg);">
+                    <div class="card">
+                        <h3>explore</h3>
+                        <p>코드베이스를 탐색하고 필요한 정보를 찾습니다.</p>
+                        <div class="card-details">
+                            <h4>탐색 전문가</h4>
+                            <p><strong>역할:</strong> 프로젝트에서 특정 파일이나 코드를 빠르게 찾아주는 검색 전문가입니다.</p>
+                            <p><strong>사용법:</strong></p>
+                            <ul>
+                                <li>"이 기능이 어디에 있어?"</li>
+                                <li>"이 파일 어디서 사용하고 있어?"</li>
+                                <li>"ViewModel이 몇 개나 있어?"</li>
+                            </ul>
+                            <p><strong>특징:</strong> 파일만 읽고 수정하지 않아서 안전하고 빠릅니다.</p>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <h3>writer</h3>
+                        <p>문서를 작성하고 지식 베이스를 업데이트합니다.</p>
+                        <div class="card-details">
+                            <h4>문서 작성자</h4>
+                            <p><strong>역할:</strong> README, 사용 가이드, 변경 이력 같은 프로젝트 문서를 작성하고 관리합니다.</p>
+                            <p><strong>사용법:</strong></p>
+                            <ul>
+                                <li>"README 파일 만들어줘"</li>
+                                <li>"이 기능 가이드 작성해줘"</li>
+                                <li>"CHANGELOG 업데이트해줘"</li>
+                            </ul>
+                            <p><strong>특징:</strong> 프로젝트의 기존 문서 스타일을 그대로 따라 일관성 있게 작성합니다.</p>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <h3>interviewer</h3>
+                        <p>모호한 요구사항을 명확히 하고 Feature Spec을 작성합니다.</p>
+                        <div class="card-details">
+                            <h4>요구사항 정리사</h4>
+                            <p><strong>역할:</strong> 애매한 요청을 정확한 작업 명세서로 바꿔줍니다.</p>
+                            <p><strong>사용법:</strong></p>
+                            <ul>
+                                <li>"뭔가 이상한데 고쳐줘" → "어떤 상황에서 뭐가 문제인가요?"</li>
+                                <li>"기능 추가해줘" → "어떤 기능을 왜 추가하나요?"</li>
+                            </ul>
+                            <p><strong>특징:</strong> 최대 3개 질문으로 핵심만 물어보고, 합리적으로 추측 가능한 건 미리 제안합니다.</p>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <h3>planner</h3>
+                        <p>구현 계획을 수립하고 작업을 단계별로 분해합니다.</p>
+                        <div class="card-details">
+                            <h4>계획 수립자</h4>
+                            <p><strong>역할:</strong> 큰 작업을 작은 단계로 나누고, 어떤 순서로 진행할지 계획합니다.</p>
+                            <p><strong>사용법:</strong></p>
+                            <ul>
+                                <li>"로그인 기능 어떻게 만들어?"</li>
+                                <li>"이 기능 추가하려면 뭐 바꿔야 해?"</li>
+                            </ul>
+                            <p><strong>특징:</strong> Domain → Data → Presentation → UI 순서로 체계적으로 계획하고, 위험도도 함께 분석합니다.</p>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <h3>tester</h3>
+                        <p>테스트 코드를 작성하고 검증 전략을 수립합니다.</p>
+                        <div class="card-details">
+                            <h4>테스트 작성자</h4>
+                            <p><strong>역할:</strong> 코드가 제대로 동작하는지 자동으로 확인하는 테스트를 작성합니다.</p>
+                            <p><strong>사용법:</strong></p>
+                            <ul>
+                                <li>"이 기능 테스트 작성해줘"</li>
+                                <li>"버그 수정하기 전에 테스트 먼저 만들어줘"</li>
+                            </ul>
+                            <p><strong>특징:</strong> 가장 효율적인 테스트 방법을 선택하고, 실패 테스트를 먼저 만들어 implementer에게 전달합니다.</p>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <h3>implementer</h3>
+                        <p>실제 코드를 구현하고 기능을 완성합니다.</p>
+                        <div class="card-details">
+                            <h4>코드 구현자</h4>
+                            <p><strong>역할:</strong> 계획과 테스트를 받아서 실제로 동작하는 코드를 작성합니다.</p>
+                            <p><strong>사용법:</strong></p>
+                            <ul>
+                                <li>"이 기능 구현해줘"</li>
+                                <li>"버그 고쳐줘"</li>
+                                <li>"리팩토링해줘"</li>
+                            </ul>
+                            <p><strong>특징:</strong> 10년 경력 Android 개발자 수준으로, 테스트를 통과하도록 코드를 작성하고 코딩 규칙을 자동으로 적용합니다.</p>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <h3>code-reviewer</h3>
+                        <p>코드 품질을 검토하고 개선 사항을 제안합니다.</p>
+                        <div class="card-details">
+                            <h4>코드 검토자</h4>
+                            <p><strong>역할:</strong> Dove Letter 베스트 프랙티스를 기반으로 코드 품질을 심층 분석합니다.</p>
+                            <p><strong>사용법:</strong></p>
+                            <ul>
+                                <li>"이 코드 리뷰해줘"</li>
+                                <li>"성능 문제 없어?"</li>
+                                <li>"버그 있는지 확인해줘"</li>
+                            </ul>
+                            <p><strong>특징:</strong> 크래시 위험, 성능 문제, 안정성 이슈를 우선순위별로 분류하고, Before/After 코드로 구체적인 수정 방법을 제시합니다.</p>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <h3>analyst</h3>
+                        <p>아키텍처를 분석하고 구조적 개선 방안을 제시합니다.</p>
+                        <div class="card-details">
+                            <h4>구조 분석가</h4>
+                            <p><strong>역할:</strong> 전체 프로젝트 구조를 분석하고 문제점과 개선 방향을 제시합니다.</p>
+                            <p><strong>사용법:</strong></p>
+                            <ul>
+                                <li>"프로젝트 구조 분석해줘"</li>
+                                <li>"아키텍처 문제점 찾아줘"</li>
+                                <li>"모듈 의존성 분석해줘"</li>
+                            </ul>
+                            <p><strong>특징:</strong> Clean Architecture 준수 여부, 레이어 분리, 순환 참조 같은 구조적 문제를 발견하고 우선순위를 매겨 보고합니다.</p>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <h3>performance-optimizer</h3>
+                        <p>성능 병목을 분석하고 최적화 방안을 제시합니다.</p>
+                        <div class="card-details">
+                            <h4>성능 최적화 전문가</h4>
+                            <p><strong>역할:</strong> 앱 속도, 메모리 사용, 화면 렌더링 성능을 측정하고 개선합니다.</p>
+                            <p><strong>사용법:</strong></p>
+                            <ul>
+                                <li>"앱이 느려, 최적화해줘"</li>
+                                <li>"메모리 누수 찾아줘"</li>
+                                <li>"시작 시간 빠르게 해줘"</li>
+                            </ul>
+                            <p><strong>특징:</strong> Compose 리컴포지션, 메모리 누수, 시작 시간 등을 측정 기반으로 개선하고, 벤치마크로 효과를 검증합니다.</p>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <h3>wiki-maintainer</h3>
+                        <p>Wiki를 자동으로 동기화하고 지식을 최신 상태로 유지합니다.</p>
+                        <div class="card-details">
+                            <h4>지식 관리자</h4>
+                            <p><strong>역할:</strong> 코드 변경 시 반복되는 지식을 자동으로 Wiki에 기록하고 최신 상태로 유지합니다.</p>
+                            <p><strong>사용법:</strong></p>
+                            <ul>
+                                <li>도메인 정책이 변경될 때</li>
+                                <li>반복되는 패턴을 발견했을 때</li>
+                                <li>Agent 운영 규칙이 생겼을 때</li>
+                            </ul>
+                            <p><strong>특징:</strong> 승인된 작업 범위 안에서 자동으로 Wiki를 동기화하고, Draft PR로 검토 후 사용자가 최종 승인합니다.</p>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <h3>committer</h3>
+                        <p>변경사항을 커밋하고 Git 히스토리를 관리합니다.</p>
+                        <div class="card-details">
+                            <h4>커밋 관리자</h4>
+                            <p><strong>역할:</strong> 변경된 파일을 분석하고 프로젝트 규칙에 맞는 커밋 메시지를 작성합니다.</p>
+                            <p><strong>사용법:</strong></p>
+                            <ul>
+                                <li>"커밋해줘"</li>
+                                <li>"변경사항 저장해줘"</li>
+                            </ul>
+                            <p><strong>특징:</strong> 이모지와 Type을 포함한 한글 커밋 메시지를 자동 생성하고, 사용자 승인 후에만 커밋합니다.</p>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <h3>pr-creator</h3>
+                        <p>Pull Request를 생성하고 변경 내역을 문서화합니다.</p>
+                        <div class="card-details">
+                            <h4>PR 생성자</h4>
+                            <p><strong>역할:</strong> 현재 브랜치의 변경사항을 분석해 템플릿에 맞춰 Pull Request를 생성합니다.</p>
+                            <p><strong>사용법:</strong></p>
+                            <ul>
+                                <li>"PR 만들어줘"</li>
+                                <li>"Pull Request 생성해줘"</li>
+                            </ul>
+                            <p><strong>특징:</strong> 커밋 메시지를 분석해 작업 내용을 정리하고, 이슈 번호를 자동으로 연결하며, UI 변경 시 결과물 첨부를 안내합니다.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Skills Section -->
+        <section id="skills" class="section">
+            <div class="container">
+                <h2>Reusable Skills</h2>
+                <p style="font-size: 18px; color: var(--body-text); margin-bottom: var(--spacing-lg); max-width: 700px;">
+                    반복되는 작업 패턴을 <strong>재사용 가능한 Skill</strong>로 정의하여 Agent들이 일관되게 활용합니다.
+                </p>
+
+                <div class="grid grid-3">
+                    <div class="card">
+                        <h3>test-workflow</h3>
+                        <p>테스트 작성, 검증, implementer 인계까지 표준화된 테스트 워크플로우</p>
+                        <div class="card-details">
+                            <h4>테스트 작성 절차</h4>
+                            <p><strong>역할:</strong> 가장 효율적인 테스트 레벨을 선택하고, 테스트를 작성한 뒤 구현자에게 전달하는 표준 절차입니다.</p>
+                            <p><strong>핵심 원칙:</strong></p>
+                            <ul>
+                                <li>위험에 맞는 가장 낮은 테스트 레벨 선택</li>
+                                <li>실패 테스트를 먼저 작성</li>
+                                <li>Given-When-Then 구조로 명확하게 작성</li>
+                            </ul>
+                            <p><strong>사용 예:</strong> tester Agent가 Domain, ViewModel, Compose UI 테스트를 작성할 때 이 절차를 따릅니다.</p>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <h3>coding-conventions</h3>
+                        <p>Kotlin/Android 코딩 컨벤션을 일관되게 적용하는 절차</p>
+                        <div class="card-details">
+                            <h4>코딩 규칙 적용</h4>
+                            <p><strong>역할:</strong> 프로젝트의 Kotlin/Android 코딩 규칙을 일관되게 적용하는 절차입니다.</p>
+                            <p><strong>주요 규칙:</strong></p>
+                            <ul>
+                                <li>함수는 15줄, 클래스는 50줄 이내</li>
+                                <li>get/set 접두사 금지</li>
+                                <li>매직 넘버 금지</li>
+                                <li>Domain → Data → Presentation → UI 순서</li>
+                            </ul>
+                            <p><strong>사용 예:</strong> implementer가 코드를 작성하거나 planner가 계획을 세울 때 참조합니다.</p>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <h3>working-fence</h3>
+                        <p>가정, 단순성, 변경 범위를 관리하는 작업 경계 설정</p>
+                        <div class="card-details">
+                            <h4>작업 범위 관리</h4>
+                            <p><strong>역할:</strong> 코드 변경 전에 범위를 명확히 하고, 최소한만 수정하는 원칙입니다.</p>
+                            <p><strong>4가지 원칙:</strong></p>
+                            <ul>
+                                <li><strong>먼저 생각:</strong> 가정을 명확히 하기</li>
+                                <li><strong>단순하게:</strong> 필요한 것만 만들기</li>
+                                <li><strong>관련 부분만:</strong> 요청된 것만 바꾸기</li>
+                                <li><strong>검증으로 완료:</strong> 테스트로 확인하기</li>
+                            </ul>
+                            <p><strong>사용 예:</strong> implementer가 구현하거나 리팩터링할 때 변경 범위를 최소화합니다.</p>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <h3>command-commit</h3>
+                        <p>Git 커밋 생성을 위한 표준화된 절차</p>
+                        <div class="card-details">
+                            <h4>커밋 생성 절차</h4>
+                            <p><strong>역할:</strong> 변경사항을 분석하고 커밋 메시지를 작성한 뒤 사용자 승인 후 커밋하는 절차입니다.</p>
+                            <p><strong>절차:</strong></p>
+                            <ul>
+                                <li>변경 파일 분석 (git status, git diff)</li>
+                                <li>커밋 메시지 후보 작성</li>
+                                <li>사용자 승인 대기</li>
+                                <li>승인 후 커밋 실행</li>
+                            </ul>
+                            <p><strong>사용 예:</strong> committer Agent가 이 절차를 따라 안전하게 커밋을 생성합니다.</p>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <h3>command-impl</h3>
+                        <p>구현 작업을 위한 표준 워크플로우</p>
+                        <div class="card-details">
+                            <h4>계획→테스트→구현 흐름</h4>
+                            <p><strong>역할:</strong> 계획 수립, 테스트 작성, 코드 구현을 순서대로 진행하는 표준 워크플로우입니다.</p>
+                            <p><strong>3단계 절차:</strong></p>
+                            <ul>
+                                <li><strong>1단계:</strong> planner가 구현 계획 수립</li>
+                                <li><strong>2단계:</strong> 사용자 승인 대기</li>
+                                <li><strong>3단계:</strong> tester → implementer 순차 실행</li>
+                            </ul>
+                            <p><strong>사용 예:</strong> 사용자가 "/impl" 명령을 실행하면 이 흐름이 자동으로 진행됩니다.</p>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <h3>command-pr</h3>
+                        <p>Pull Request 생성을 위한 표준화된 절차</p>
+                        <div class="card-details">
+                            <h4>PR 생성 절차</h4>
+                            <p><strong>역할:</strong> 브랜치 변경사항을 분석하고 PR 본문을 작성한 뒤 사용자 확인 후 생성하는 절차입니다.</p>
+                            <p><strong>절차:</strong></p>
+                            <ul>
+                                <li>브랜치 상태 및 변경사항 분석</li>
+                                <li>템플릿에 맞춰 PR 본문 작성</li>
+                                <li>사용자 확인 대기</li>
+                                <li>확인 후 push 및 PR 생성</li>
+                            </ul>
+                            <p><strong>사용 예:</strong> pr-creator Agent가 이 절차를 따라 템플릿 기반 PR을 생성합니다.</p>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <h3>wiki-maintainer</h3>
+                        <p>Wiki 자동 동기화 및 상태 관리 워크플로우</p>
+                        <div class="card-details">
+                            <h4>Wiki 동기화 절차</h4>
+                            <p><strong>역할:</strong> 승인된 작업에서 Wiki 변경을 감지하고 자동으로 동기화하는 절차입니다.</p>
+                            <p><strong>주요 단계:</strong></p>
+                            <ul>
+                                <li>Wiki 변경 상태 확인</li>
+                                <li>도메인 정책/반복 지식 판단</li>
+                                <li>Wiki, Index, Log 자동 갱신</li>
+                                <li>검증 후 Draft PR 생성</li>
+                            </ul>
+                            <p><strong>사용 예:</strong> wiki-maintainer Agent가 코드 변경 후 지식을 Wiki에 자동 반영할 때 사용합니다.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Stats Section -->
+        <section id="stats" class="section">
+            <div class="container">
+                <h2>성과</h2>
+                <p style="font-size: 18px; color: var(--body-text); margin-bottom: var(--spacing-lg);">
+                    체계적으로 구축된 지식과 자동화 시스템의 규모입니다.
+                </p>
+
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <span class="stat-number" data-target="12">0</span>
+                        <span class="stat-label">전문 Agent</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number" data-target="60">0</span>
+                        <span class="stat-label">도메인 용어</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number" data-target="16">0</span>
+                        <span class="stat-label">Wiki 문서</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number" data-target="8">0</span>
+                        <span class="stat-label">재사용 Skill</span>
+                    </div>
+                </div>
+
+                <div style="margin-top: var(--spacing-xl); text-align: center;">
+                    <h3 style="margin-bottom: var(--spacing-md);">왜 이 프로젝트가 특별한가요?</h3>
+                    <p style="font-size: 18px; color: var(--canvas); max-width: 700px; margin: 0 auto; line-height: 1.8;">
+                        단순한 앱 개발이 아닌, <strong style="color: var(--spotify-green);">AI와 협업하는 개발 환경 자체를 설계</strong>한 경험입니다.<br>
+                        지식 관리, Agent 오케스트레이션, 자동화 파이프라인까지 - <strong>개발의 개발</strong>을 고민했습니다.
+                    </p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Scripts -->
+    <script>
+        // Progress Bar
+        function updateProgressBar() {
+            const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrolled = (winScroll / height) * 100;
+            document.getElementById('progressBar').style.width = scrolled + '%';
+            document.getElementById('progressBar').setAttribute('aria-valuenow', Math.round(scrolled));
+        }
+
+        window.addEventListener('scroll', updateProgressBar);
+
+        // Sticky Navigation
+        const stickyNav = document.getElementById('stickyNav');
+        const hero = document.querySelector('.hero');
+
+        function handleStickyNav() {
+            const heroBottom = hero.offsetHeight;
+            if (window.pageYOffset > heroBottom - 100) {
+                stickyNav.classList.add('visible');
+            } else {
+                stickyNav.classList.remove('visible');
+            }
+        }
+
+        window.addEventListener('scroll', handleStickyNav);
+
+        // Active Section Highlighting
+        const sections = document.querySelectorAll('.section');
+        const navLinks = document.querySelectorAll('.nav-sticky a');
+
+        function highlightActiveSection() {
+            let current = '';
+
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                const sectionHeight = section.clientHeight;
+                if (pageYOffset >= sectionTop - 200) {
+                    current = section.getAttribute('id');
+                }
+            });
+
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('data-section') === current) {
+                    link.classList.add('active');
+                }
+            });
+        }
+
+        window.addEventListener('scroll', highlightActiveSection);
+
+        // Intersection Observer for Section Animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -100px 0px'
+        };
+
+        const sectionObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, observerOptions);
+
+        sections.forEach(section => {
+            sectionObserver.observe(section);
+        });
+
+        // Counter Animation
+        function animateCounter(element) {
+            const target = parseInt(element.getAttribute('data-target'));
+            const duration = 1500;
+            const increment = target / (duration / 16);
+            let current = 0;
+
+            const timer = setInterval(() => {
+                current += increment;
+                if (current >= target) {
+                    element.textContent = target + '+';
+                    clearInterval(timer);
+                } else {
+                    element.textContent = Math.floor(current);
+                }
+            }, 16);
+        }
+
+        const statsSection = document.getElementById('stats');
+        const statsObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const counters = entry.target.querySelectorAll('.stat-number');
+                    counters.forEach(counter => {
+                        if (counter.textContent === '0') {
+                            animateCounter(counter);
+                        }
+                    });
+                    statsObserver.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.5 });
+
+        statsObserver.observe(statsSection);
+
+        // Ripple Effect on Buttons
+        document.querySelectorAll('.btn').forEach(button => {
+            button.addEventListener('click', function(e) {
+                // Ripple effect is handled by CSS :active::after
+            });
+        });
+
+        // Smooth scroll for anchor links (fallback for older browsers)
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                const targetId = this.getAttribute('href');
+                if (targetId === '#') return;
+
+                const targetElement = document.querySelector(targetId);
+                if (targetElement) {
+                    e.preventDefault();
+                    targetElement.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Keyboard Navigation Enhancement
+        document.addEventListener('keydown', function(e) {
+            // Allow tab navigation without breaking functionality
+            if (e.key === 'Tab') {
+                document.body.classList.add('keyboard-nav');
+            }
+        });
+
+        document.addEventListener('mousedown', function() {
+            document.body.classList.remove('keyboard-nav');
+        });
+    </script>
+</body>
+</html>
